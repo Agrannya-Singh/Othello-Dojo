@@ -58,6 +58,20 @@ The UI is built with React components, many of which are styled using ShadCN UI.
 - **`ai-panel.tsx`**: Contains the buttons for interacting with the generative AI features (suggestions, visualization).
 - **`win-rate-chart.tsx`**: A chart component (using Recharts) that displays the simulated training data.
 
+- sequenceDiagram
+    participant User
+    participant Board
+    participant AI
+    participant Minimax
+
+    User->>Board: Make move
+    Board->>AI: Request AI move
+    AI->>Minimax: Evaluate board (with corner control)
+    Minimax-->>AI: Return best move
+    AI-->>Board: Apply move
+    Board-->>User: Update board state
+
+
 ## Getting Started
 
 To run this project locally, you'll need to have Node.js and npm installed.
