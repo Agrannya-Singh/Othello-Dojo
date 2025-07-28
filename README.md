@@ -29,6 +29,9 @@ This project was built with the help of caffeine, heavy metal music and grok.It 
 
 ## How It Works
 
+<img width="1452" height="627" alt="image" src="https://github.com/user-attachments/assets/298ef3d4-c3d1-4656-a45e-41bf287c1ddd" />
+
+
 ### Core Game Logic (`src/lib/othello.ts`)
 
 The fundamental rules of Othello are implemented in pure TypeScript. This includes functions for:
