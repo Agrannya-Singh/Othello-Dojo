@@ -30,6 +30,7 @@ This project was built with the help of caffeine, heavy metal music and grok.It 
 ## How It Works
 
 <img width="1452" height="627" alt="image" src="https://github.com/user-attachments/assets/298ef3d4-c3d1-4656-a45e-41bf287c1ddd" />
+<img  width="1452" height="627" alt="image" src="https://raw.githubusercontent.com/Agrannya-Singh/Othello-Dojo/refs/heads/master/diagram-export-7-30-2025-5_11_35-PM.png" />
 
 
 ### Core Game Logic (`src/lib/othello.ts`)
