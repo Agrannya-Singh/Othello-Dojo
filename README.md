@@ -1,6 +1,8 @@
 # OthelloAI Dojo
 
-Welcome to the OthelloAI Dojo! This is a modern, interactive web application built with Next.js that allows users to play the classic game of Othello (also known as Reversi) against an AI opponent. The application serves as a demonstration of how modern AI and web technologies can be combined to create engaging, intelligent experiences. Users can not only play the game but also learn from the AI by requesting move suggestions and visualizing its decision-making process.
+-**This project is being maintained by  IEEE Information Theory Society . VIT Vellore Chapter.**
+
+Welcome to the OthelloAI Dojo! This is a modern, interactive web application built with Next.js that allows users to play the classic game of Othello (also known as Reversi) against an AI opponent.. Users can not only play the game but also learn from the AI by requesting move suggestions and visualizing its decision-making process.
 
 ## Features
 
@@ -15,17 +17,21 @@ Welcome to the OthelloAI Dojo! This is a modern, interactive web application bui
 
 ## Technology Stack
 
-This project was built with the help of an AI coding assistant and utilizes a modern, type-safe technology stack.
+This project was built with the help of caffeine, heavy metal music and grok.It utilizes a modern, type-safe technology stack.
 
 - **Framework**: [Next.js](https://nextjs.org/) (using the App Router)
-- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Language**: [TypeScript](https://www.typescriptlang.org/),ParselToungue 
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/)
 - **UI Components**: [ShadCN UI](https://ui.shadcn.com/)
 - **Generative AI**: [Google Gemini](https://ai.google/gemini) via [Genkit](https://firebase.google.com/docs/genkit), Google's open-source generative AI framework.
-- **Icons**: [Lucide React](https://lucide.dev/guide/packages/lucide-react)
+- **Icons**: [Lucide React](https://lucide.dev/guide/packages/lucide-react), 
 - **State Management**: React Hooks (`useState`, `useEffect`, `useCallback`)
 
 ## How It Works
+
+<img width="1452" height="627" alt="image" src="https://github.com/user-attachments/assets/298ef3d4-c3d1-4656-a45e-41bf287c1ddd" />
+<img  width="1452" height="627" alt="image" src="https://raw.githubusercontent.com/Agrannya-Singh/Othello-Dojo/refs/heads/master/diagram-export-7-30-2025-5_11_35-PM.png" />
+
 
 ### Core Game Logic (`src/lib/othello.ts`)
 
@@ -56,13 +62,27 @@ The UI is built with React components, many of which are styled using ShadCN UI.
 - **`ai-panel.tsx`**: Contains the buttons for interacting with the generative AI features (suggestions, visualization).
 - **`win-rate-chart.tsx`**: A chart component (using Recharts) that displays the simulated training data.
 
+- sequenceDiagram
+    participant User
+    participant Board
+    participant AI
+    participant Minimax
+
+    User->>Board: Make move
+    Board->>AI: Request AI move
+    AI->>Minimax: Evaluate board (with corner control)
+    Minimax-->>AI: Return best move
+    AI-->>Board: Apply move
+    Board-->>User: Update board state
+
+
 ## Getting Started
 
 To run this project locally, you'll need to have Node.js and npm installed.
 
 1.  **Clone the Repository**:
     ```bash
-    git clone [repository-url]
+    git clone https://github.com/Agrannya-Singh/Othello-Dojo
     cd othello-ai-dojo
     ```
 
@@ -75,9 +95,9 @@ To run this project locally, you'll need to have Node.js and npm installed.
 3.  **Set Up Environment Variables**:
     Create a new file named `.env` in the root of the project. This file is needed for the generative AI features. If you don't intend to use the AI move suggestion or visualization, you can leave this blank.
     ```
-    GEMINI_API_KEY=YOUR_API_KEY_HERE
+    GEMINI_API_KEY=YOUR_API_KEY_HERE 
     ```
-    You can get a Gemini API key from [Google AI Studio](https://makersuite.google.com/app/apikey).
+    You can get a Gemini API key from [Google AI Studio](https://makersuite.google.com/app/apikey).Please proplery manage your API keys  and do not push them here.
 
 4.  **Run the Development Server**:
     ```bash
@@ -89,10 +109,12 @@ To run this project locally, you'll need to have Node.js and npm installed.
 
 We welcome contributions and feedback! If you'd like to contribute, report a bug, or request a new feature, please do so via the project's official repository.
 
-- **Bug Reports**: If you find a bug, please open an issue and provide as much detail as possible, including steps to reproduce the issue, your browser/OS, and screenshots if applicable.
+- **Bug Reports**: If you find a bug, please open an issue and provide as much detail as possible, including steps to reproduce the issue, your browser/OS, and screenshots if applicable.Our team will take of it 
 - **Feature Requests**: Have a great idea for a new feature? Open an issue to describe your proposal. We'd love to hear it.
-- **Pull Requests**: Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+- **Pull Requests**: Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.PLEASE DO NOT PUSH TO MAIN BRANCH
 
 ## Contact
 
-For any questions or inquiries, please reach out to the development team through the project's repository or via email at `developer@example.com`.
+For any questions or inquiries, please reach out to the development team through the project's repository or via email at `singh.agrannya@gmail.com`.
+Follow the given template for feature request and/or reporting bugs.
+
