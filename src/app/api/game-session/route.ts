@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/database';
 import { authenticateApiRequest, checkRateLimit, createSecureErrorResponse, sanitizeInput } from '@/middleware/auth';
 import { z } from 'zod';
+import * as crypto from 'crypto';
 
 // Input validation schemas
 const CreateGameSchema = z.object({
@@ -44,7 +45,7 @@ export async function POST(request: NextRequest) {
     // Create game session
     const { database } = await connectToDatabase();
     const gameSession = {
-      sessionId: `game_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      sessionId: `game_${Date.now()}_${crypto.randomBytes(9).toString('hex')}`,
       ...validatedInput,
       board: createInitialBoard(),
       currentPlayer: 'black' as const,
