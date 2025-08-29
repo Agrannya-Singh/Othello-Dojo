@@ -1,4 +1,3 @@
-import { TIMING, TOAST_MESSAGES, ANALYSIS } from "@/lib/constants/game";
 
 
 'use client';
@@ -108,8 +107,8 @@ export default function Home() {
         setGameState('gameOver');
       } else {
         toast({
-          title: TOAST_MESSAGES.TURN_SKIPPED,
-          description: TOAST_MESSAGES.TURN_SKIPPED_DESC(player, opponent),
+          title: "Turn Skipped",
+          description: `No valid moves for ${player}. ${opponent}'s turn.`,
         });
         setCurrentPlayer(opponent);
       }
@@ -131,11 +130,11 @@ export default function Home() {
     const flipped = getFlipsForMove(board, currentPlayer, move.row, move.col);
     
     setFlippingPieces(flipped.map(p => ({...p})));
-    setTimeout(() => setFlippingPieces([]), TIMING.ANIMATION_DURATION);
+    setTimeout(() => setFlippingPieces([]), 500);
 
     playSound('place');
     if (flipped.length > 0) {
-      setTimeout(() => playSound('flip'), TIMING.SOUND_DELAY);
+      setTimeout(() => playSound('flip'), 200);
     }
 
     setHistory(prev => [...prev, {board: boardBeforeMove, player: currentPlayer, move}]);
@@ -208,21 +207,21 @@ export default function Home() {
         const rationale = `The optimal move is ${moveString}. This move was determined by the game's AI to maximize your score and strategic position based on the current board state.`;
         setSuggestion({ move, rationale });
         toast({
-          title: TOAST_MESSAGES.AI_SUGGESTION,
-          description: TOAST_MESSAGES.AI_SUGGESTION_DESC(moveString),
+          title: "AI Suggestion",
+          description: `The AI suggests moving to ${moveString}.`,
         });
       } else {
          toast({
-          title: TOAST_MESSAGES.NO_SUGGESTION,
-          description: TOAST_MESSAGES.NO_SUGGESTION_DESC,
+          title: "No Suggestion Available",
+          description: "There are no valid moves to suggest.",
           variant: "destructive",
         });
       }
     } catch (error) {
       console.error("Error getting move suggestion:", error);
       toast({
-        title: TOAST_MESSAGES.ERROR,
-        description: TOAST_MESSAGES.SUGGESTION_ERROR,
+        title: "Error",
+        description: "Could not get a move suggestion. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -257,7 +256,7 @@ export default function Home() {
     } catch (error) {
       console.error("Error visualizing decision:", error);
        toast({
-        title: TOAST_MESSAGES.ERROR,
+        title: "Error",
         description: "Could not visualize AI decision.",
         variant: "destructive",
       });
@@ -323,8 +322,8 @@ export default function Home() {
   const handleUndo = () => {
     if (history.length < 2 || gameMode === 'aiVsAi') {
       toast({ 
-        title: TOAST_MESSAGES.CANNOT_UNDO, 
-        description: TOAST_MESSAGES.NO_MOVES_TO_UNDO, 
+        title: "Cannot Undo", 
+        description: "No moves to undo or action not allowed in AI vs AI mode.", 
         variant: "destructive" 
       });
       return;
@@ -335,7 +334,7 @@ export default function Home() {
     // Fix: Change <= to < to allow undo when we have exactly enough moves
     if (history.length < movesToUndo) {
       toast({ 
-        title: TOAST_MESSAGES.CANNOT_UNDO, 
+        title: "Cannot Undo", 
         description: "Not enough moves to undo.", 
         variant: "destructive" 
       });
@@ -368,7 +367,7 @@ export default function Home() {
       setVisualization(null);
       
       toast({ 
-        title: TOAST_MESSAGES.MOVE_UNDONE, 
+        title: "Move Undone", 
         description: `Undid ${movesToUndo} move(s)`, 
         variant: "default" 
       });
@@ -397,11 +396,11 @@ export default function Home() {
             if(bestMove){
                 const flipped = getFlipsForMove(board, aiColor, bestMove.row, bestMove.col);
                 setFlippingPieces(flipped.map(p => ({...p})));
-                setTimeout(() => setFlippingPieces([]), TIMING.ANIMATION_DURATION);
+                setTimeout(() => setFlippingPieces([]), 500);
                 
                 playSound('place');
                 if (flipped.length > 0) {
-                    setTimeout(() => playSound('flip'), TIMING.SOUND_DELAY);
+                    setTimeout(() => playSound('flip'), 200);
                 }
 
               setHistory(prev => [...prev, {board, player: currentPlayer, move: bestMove}]);
@@ -412,7 +411,7 @@ export default function Home() {
             }
           }
           setAiIsThinking(false);
-        }, TIMING.AI_THINKING_DELAY);
+        }, 1000);
     }
   
     if (gameMode === 'playerVsAi' && currentPlayer === aiPlayer) {
@@ -569,7 +568,7 @@ export default function Home() {
               {analysisLoading && (
                   <div className="flex items-center justify-center h-48">
                       <Loader2 className="w-8 h-8 animate-spin text-primary" />
-                      <p className="ml-4 text-muted-foreground">ANALYSIS.LOADER_TEXT</p>
+                      <p className="ml-4 text-muted-foreground">The AI is analyzing your game...</p>
                   </div>
               )}
               {gameAnalysis && (

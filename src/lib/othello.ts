@@ -1,7 +1,6 @@
-
 import type { BoardState, Player } from '@/types/othello';
+import { GAME_BOARD } from './constants/game';
 
-const BOARD_SIZE = 8;
 const DIRECTIONS = [
   [-1, -1], [-1, 0], [-1, 1],
   [0, -1],           [0, 1],
@@ -9,7 +8,7 @@ const DIRECTIONS = [
 ];
 
 export function createInitialBoard(): BoardState {
-  const board: BoardState = Array(BOARD_SIZE).fill(null).map(() => Array(BOARD_SIZE).fill('empty'));
+  const board: BoardState = Array(GAME_BOARD.SIZE).fill(null).map(() => Array(GAME_BOARD.SIZE).fill('empty'));
   board[3][3] = 'white';
   board[3][4] = 'black';
   board[4][3] = 'black';
@@ -20,89 +19,98 @@ export function createInitialBoard(): BoardState {
 export const getOpponent = (player: Player): Player => (player === 'black' ? 'white' : 'black');
 
 function isInsideBoard(row: number, col: number): boolean {
-  return row >= 0 && row < BOARD_SIZE && col >= 0 && col < BOARD_SIZE;
+  return row >= 0 && row < GAME_BOARD.SIZE && col >= 0 && col < GAME_BOARD.SIZE;
 }
 
-export function getFlipsForMove(board: BoardState, player: Player, row: number, col: number): {row: number, col: number}[] {
-    if (!isInsideBoard(row, col) || board[row][col] !== 'empty') {
-      return [];
+export function isValidMove(board: BoardState, row: number, col: number, player: Player): boolean {
+  if (board[row][col] !== 'empty') return false;
+
+  for (const [dr, dc] of DIRECTIONS) {
+    if (hasValidDirection(board, row, col, dr, dc, player)) {
+      return true;
     }
-  
-    const opponent = getOpponent(player);
-    const tilesToFlip: {row: number, col: number}[] = [];
-  
-    for (const [dr, dc] of DIRECTIONS) {
+  }
+  return false;
+}
+
+function hasValidDirection(board: BoardState, row: number, col: number, dr: number, dc: number, player: Player): boolean {
+  const opponent = getOpponent(player);
+  let r = row + dr;
+  let c = col + dc;
+  let foundOpponent = false;
+
+  while (isInsideBoard(r, c)) {
+    if (board[r][c] === 'empty') return false;
+    if (board[r][c] === opponent) {
+      foundOpponent = true;
+    } else if (board[r][c] === player) {
+      return foundOpponent;
+    }
+    r += dr;
+    c += dc;
+  }
+  return false;
+}
+
+export function makeMove(board: BoardState, row: number, col: number, player: Player): BoardState {
+  const newBoard = board.map(row => [...row]);
+  newBoard[row][col] = player;
+
+  for (const [dr, dc] of DIRECTIONS) {
+    if (hasValidDirection(board, row, col, dr, dc, player)) {
       let r = row + dr;
       let c = col + dc;
-      const potentialFlips: {row: number, col: number}[] = [];
-  
-      while (isInsideBoard(r, c) && board[r][c] === opponent) {
-        potentialFlips.push({ row: r, col: c });
+      while (isInsideBoard(r, c) && board[r][c] === getOpponent(player)) {
+        newBoard[r][c] = player;
         r += dr;
         c += dc;
       }
-  
-      if (isInsideBoard(r, c) && board[r][c] === player && potentialFlips.length > 0) {
-        tilesToFlip.push(...potentialFlips);
-      }
-    }
-  
-    return tilesToFlip;
-}
-
-export function isValidMove(board: BoardState, player: Player, row: number, col: number): boolean {
-    return getFlipsForMove(board, player, row, col).length > 0;
-}
-
-
-export function getValidMoves(board: BoardState, player: Player): {row: number, col: number}[] {
-  const validMoves: {row: number, col: number}[] = [];
-  for (let r = 0; r < BOARD_SIZE; r++) {
-    for (let c = 0; c < BOARD_SIZE; c++) {
-      if (isValidMove(board, player, r, c)) {
-        validMoves.push({ row: r, col: c });
-      }
     }
   }
-  return validMoves;
-}
-
-export function applyMove(board: BoardState, player: Player, row: number, col: number): BoardState {
-  const tilesToFlip = getFlipsForMove(board, player, row, col);
-  
-  if (tilesToFlip.length === 0 && board[row][col] !== 'empty') {
-      // This is not a valid move, return the original board
-      return board;
-  }
-
-  const newBoard = board.map(r => [...r]) as BoardState;
-
-  newBoard[row][col] = player;
-  tilesToFlip.forEach(tile => {
-    newBoard[tile.row][tile.col] = player;
-  });
 
   return newBoard;
 }
 
-export function getScore(board: BoardState): { black: number; white: number } {
+export function getValidMoves(board: BoardState, player: Player): { row: number; col: number }[] {
+  const moves: { row: number; col: number }[] = [];
+  for (let row = 0; row < GAME_BOARD.SIZE; row++) {
+    for (let col = 0; col < GAME_BOARD.SIZE; col++) {
+      if (isValidMove(board, row, col, player)) {
+        moves.push({ row, col });
+      }
+    }
+  }
+  return moves;
+}
+
+export function countPieces(board: BoardState): { black: number; white: number } {
   let black = 0;
   let white = 0;
-  board.forEach(row => {
-    row.forEach(cell => {
-      if (cell === 'black') black++;
-      if (cell === 'white') white++;
-    });
-  });
+  
+  for (let row = 0; row < GAME_BOARD.SIZE; row++) {
+    for (let col = 0; col < GAME_BOARD.SIZE; col++) {
+      if (board[row][col] === 'black') black++;
+      else if (board[row][col] === 'white') white++;
+    }
+  }
+  
   return { black, white };
 }
 
-export function boardToString(board: BoardState): string {
-  return board.map(row => 
-    row.map(cell => {
-      if (cell === 'black') return 'B';
-      if (cell === 'white') return 'W';
-      return '_';
-    }).join('')
-  ).join('\n');
+export function getPiecesToFlip(board: BoardState, row: number, col: number, player: Player): { row: number; col: number }[] {
+  const piecesToFlip: { row: number; col: number }[] = [];
+
+  for (const [dr, dc] of DIRECTIONS) {
+    if (hasValidDirection(board, row, col, dr, dc, player)) {
+      let r = row + dr;
+      let c = col + dc;
+      while (isInsideBoard(r, c) && board[r][c] === getOpponent(player)) {
+        piecesToFlip.push({ row: r, col: c });
+        r += dr;
+        c += dc;
+      }
+    }
+  }
+
+  return piecesToFlip;
 }
