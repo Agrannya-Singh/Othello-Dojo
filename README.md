@@ -96,6 +96,7 @@ To run this project locally, you'll need to have Node.js and npm installed.
     ```
     The application will be available at `http://localhost:9002`.
 
+creating genral PR
 ## Contributing & Bug Reports
 
 We welcome contributions and feedback! If you'd like to contribute, report a bug, or request a new feature, please do so via the project's official repository.
