@@ -108,3 +108,4 @@ We welcome contributions and feedback! If you'd like to contribute, report a bug
 
 For any questions or inquiries, please reach out to the development team through the project's repository or via email at `singh.agrannya@gmail.com`.
 Khanak Verma - 24BIT0531
+Tanishi Raj -24BIT0517
