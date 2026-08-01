@@ -12,7 +12,7 @@
  * - Performance monitoring
  */
 
-import { MongoClient, Db, Collection, ObjectId } from 'mongodb';
+import { MongoClient, Db, Collection, ObjectId, type Document } from 'mongodb';
 import { z } from 'zod';
 
 // Environment variable validation schema
@@ -174,7 +174,7 @@ export async function getDatabase(): Promise<Db> {
  * @param collectionName Name of the collection
  * @returns Promise that resolves to the collection instance
  */
-export async function getCollection<T = any>(collectionName: string): Promise<Collection<T>> {
+export async function getCollection<T extends Document = Document>(collectionName: string): Promise<Collection<T>> {
   const database = await getDatabase();
   return database.collection<T>(collectionName);
 }

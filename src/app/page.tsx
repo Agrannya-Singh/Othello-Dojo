@@ -21,6 +21,7 @@ import type { AnalyzeGameOutput } from '@/ai/flows/game-analysis';
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { minimax } from '@/lib/minimax';
+import { getCnnModelMove } from '@/lib/cnn-model';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
@@ -138,7 +139,7 @@ export default function Home() {
         }
 
         const finalScore = getScore(board);
-        const winner = finalScore.black > finalScore.white ? 'black' : finalScore.white > finalScore.black ? 'white' : 'draw';
+        const winner: Player | 'draw' = finalScore.black > finalScore.white ? 'black' : finalScore.white > finalScore.black ? 'white' : 'draw';
         const gameResult = { winner, finalScore };
 
         const result = await concludeGame(gameId, gameResult);
@@ -257,20 +258,31 @@ export default function Home() {
   const startPlayerVsAiGame = async (player: Player) => startGame('playerVsAi', player);
   const startAiVsAiGame = async () => startGame('aiVsAi', null);
 
-  const handleSuggestMove = () => {
+  const handleSuggestMove = async () => {
     if (gameMode === 'aiVsAi' || !userPlayer) return;
     setSuggestionLoading(true);
     setSuggestion(null);
 
     try {
-      const { move } = minimax(board, difficulty, true, currentPlayer);
-      if (move) {
-        const moveString = `${rowLabels[move.row]}${move.col + 1}`;
-        const rationale = `The optimal move is ${moveString}. This move maximizes your score based on the AI's analysis.`;
-        setSuggestion({ move, rationale });
-        toast({ title: "AI Suggestion", description: `The AI suggests moving to ${moveString}.` });
+      if (difficulty === 6) {
+        const { move, rationale } = await getCnnModelMove(board, currentPlayer);
+        if (move) {
+          setSuggestion({ move, rationale });
+          const moveString = `${rowLabels[move.row]}${move.col + 1}`;
+          toast({ title: "Trained Model Suggestion", description: `ResNet-8 CNN V3 suggests moving to ${moveString}.` });
+        } else {
+          toast({ title: "No Suggestion Available", description: "There are no valid moves to suggest.", variant: "destructive" });
+        }
       } else {
-        toast({ title: "No Suggestion Available", description: "There are no valid moves to suggest.", variant: "destructive" });
+        const { move } = minimax(board, difficulty, true, currentPlayer);
+        if (move) {
+          const moveString = `${rowLabels[move.row]}${move.col + 1}`;
+          const rationale = `The optimal move is ${moveString}. This move maximizes your score based on the AI's analysis.`;
+          setSuggestion({ move, rationale });
+          toast({ title: "AI Suggestion", description: `The AI suggests moving to ${moveString}.` });
+        } else {
+          toast({ title: "No Suggestion Available", description: "There are no valid moves to suggest.", variant: "destructive" });
+        }
       }
     } catch (error) {
       console.error("Error getting move suggestion:", error);
@@ -403,18 +415,23 @@ export default function Home() {
   useEffect(() => {
     if (gameState !== 'playing' || aiIsThinking) return;
 
-    const handleAiMove = (aiDifficulty: number, aiColor: Player) => {
+    const handleAiMove = async (aiDifficulty: number, aiColor: Player) => {
       setAiIsThinking(true);
-      setTimeout(() => {
-        const moves = getValidMoves(board, aiColor);
-        if (moves.length > 0) {
-          const { move: bestMove } = minimax(board, aiDifficulty, true, aiColor);
-          if (bestMove) {
-            handlePlayerMove(bestMove); // AI uses the same move handler
-          }
+      const moves = getValidMoves(board, aiColor);
+      if (moves.length > 0) {
+        let bestMove: Move | null = null;
+        if (aiDifficulty === 6) {
+          const res = await getCnnModelMove(board, aiColor);
+          bestMove = res.move;
+        } else {
+          const res = minimax(board, aiDifficulty, true, aiColor);
+          bestMove = res.move;
         }
-        setAiIsThinking(false);
-      }, 1000);
+        if (bestMove) {
+          handlePlayerMove(bestMove);
+        }
+      }
+      setAiIsThinking(false);
     };
 
     if (gameMode === 'playerVsAi' && currentPlayer === aiPlayer) {

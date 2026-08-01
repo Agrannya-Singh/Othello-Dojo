@@ -43,6 +43,7 @@ const DifficultySelector = ({id, value, onChange}: {id: string, value: number, o
             <SelectItem value="3">Hard (Depth 3)</SelectItem>
             <SelectItem value="4">Expert (Depth 4)</SelectItem>
             <SelectItem value="5">Master (Depth 5)</SelectItem>
+            <SelectItem value="6">🧠 Trained Model (ResNet-8 CNN V3)</SelectItem>
         </SelectContent>
     </Select>
 )
@@ -192,7 +193,7 @@ export default function GameInfoPanel({
         {renderGameState()}
 
         { (gameState === 'menu' || gameState === 'gameOver') && renderMenu() }
-        { (gameState === 'playing' && gameState !== 'gameOver') && (
+        { gameState === 'playing' && (
             <Button className="w-full" variant="outline" onClick={onResetGame}>
                  <RefreshCw className="mr-2 h-4 w-4" />
                 Reset Game

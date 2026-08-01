@@ -26,7 +26,7 @@ export async function createGame(
     };
 
     // The GameDBSchema is now imported, ensuring consistency.
-    const validatedData = GameDBSchema.omit({ _id: true }).parse(newGameData);
+    const validatedData = GameDBSchema.parse(newGameData);
     const result = await gamesCollection.insertOne(validatedData);
     
     // Return the ID as a string for client-side use
@@ -79,7 +79,7 @@ export async function addMoveToGame(gameId: string, moveData: z.infer<typeof Mov
     const result = await gamesCollection.updateOne(
       { _id: new ObjectId(gameId) },
       {
-        $push: { moveHistory: validatedMove },
+        $push: { moveHistory: validatedMove as any },
         $set: { updatedAt: new Date() },
       }
     );

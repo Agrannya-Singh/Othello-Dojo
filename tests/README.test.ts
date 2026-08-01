@@ -286,7 +286,7 @@ describe('README.md Validation Tests', () => {
 
     test('explains AI features in detail', () => {
       expect(readmeContent).toContain('move suggestion');
-      expect(readmeContent).toContains('strategic rationale');
+      expect(readmeContent).toContain('strategic rationale');
       expect(readmeContent).toContain('decision-making process');
       expect(readmeContent).toContain('win-rate chart');
     });

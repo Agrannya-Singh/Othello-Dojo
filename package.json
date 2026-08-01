@@ -47,6 +47,7 @@
     "mongodb": "^6.5.0",
     "mongoose": "^8.8.0",
     "next": "15.3.8",
+    "onnxruntime-web": "^1.27.0",
     "patch-package": "^8.0.0",
     "react": "^18.3.1",
     "react-day-picker": "^9.10.0",
@@ -58,14 +59,15 @@
     "zod": "^3.24.2"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.12",
+    "@types/jest": "^30.0.0",
     "@types/node": "^25",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "autoprefixer": "^10.4.23",
     "genkit-cli": "^1.17.1",
     "postcss": "^8",
     "tailwindcss": "^4.1.12",
-    "typescript": "^5",
-    "@tailwindcss/postcss": "^4.1.12",
-    "autoprefixer": "^10.4.23"
+    "typescript": "^5"
   }
 }
