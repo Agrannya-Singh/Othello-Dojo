@@ -43,7 +43,7 @@ const DifficultySelector = ({id, value, onChange}: {id: string, value: number, o
             <SelectItem value="3">Hard (Depth 3)</SelectItem>
             <SelectItem value="4">Expert (Depth 4)</SelectItem>
             <SelectItem value="5">Master (Depth 5)</SelectItem>
-            <SelectItem value="6">🧠 Trained Model (ResNet-8 CNN V3)</SelectItem>
+            <SelectItem value="6">Trained Model (ResNet-8 CNN V3)</SelectItem>
         </SelectContent>
     </Select>
 )

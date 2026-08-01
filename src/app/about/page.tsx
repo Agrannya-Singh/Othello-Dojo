@@ -30,23 +30,20 @@ export default function AboutPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-2xl">
               <BrainCircuit className="w-6 h-6 text-primary" />
-              AI Training and Strategy
+              AI Neural Architecture & Deep Reinforcement Learning
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4 text-muted-foreground">
             <p>
-              The AI opponent in this application was trained using a combination of classic game theory and modern AI techniques. The core of its decision-making process is the <strong>Minimax algorithm</strong> with <strong>Alpha-Beta Pruning</strong>.
-            </p>
-            <p>
-              <strong>Minimax</strong> is a recursive algorithm used in two-player, zero-sum games (like Othello) to choose the optimal move. It works by creating a tree of all possible moves a few steps into the future. The AI assumes the player will always make the best move for them (maximizing their score), and the AI will try to make the move that minimizes the player's potential maximum score. The "depth" of this search tree determines the difficulty. A deeper search means the AI "thinks" more moves ahead, resulting in a tougher opponent.
-            </p>
-            <p>
-              The AI also leverages a generative AI model (powered by Google's Gemini) for two key features:
+              The trained AI opponent in this application is based on the seminal deep reinforcement learning architecture proposed by <strong>David et al. (DeepMind AlphaZero)</strong>. It consists of an 8-residual block Convolutional Neural Network (ResNet-8 CNN V3) with dual evaluation heads:
             </p>
             <ul className="list-disc pl-5 space-y-2">
-              <li><strong>Move Suggestion:</strong> When you ask for a suggestion, the current board state is sent to the AI model, which analyzes it based on strategic principles of Othello (e.g., controlling corners, maximizing mobility, forcing opponent into bad positions) to recommend a strong move.</li>
-              <li><strong>Decision Visualization:</strong> The visualization feature provides a natural language explanation of the AI's thought process. It explains why one move is considered superior to others in the current context of the game.</li>
+              <li><strong>Policy Head:</strong> Outputs logit probabilities across all 64 board cells to select high-reward moves.</li>
+              <li><strong>Value Head:</strong> Evaluates position strength and estimates win probabilities from any given board state.</li>
             </ul>
+            <p>
+              Model weights are stored in ONNX format (<code>othello_model_final.onnx</code>) and executed client-side via <code>onnxruntime-web</code> directly in your browser using WebAssembly.
+            </p>
           </CardContent>
         </Card>
 
@@ -57,15 +54,10 @@ export default function AboutPage() {
               Guides & Documentation
             </CardTitle>
           </CardHeader>
-          <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-muted-foreground">
+          <CardContent className="grid grid-cols-1 gap-4 text-muted-foreground">
             <Button asChild variant="outline">
-                <Link href="/how-to-use" className="flex items-center">
+                <Link href="/how-to-use" className="flex items-center justify-center">
                     <HelpCircle className="w-4 h-4 mr-2" /> How to Use This App
-                </Link>
-            </Button>
-            <Button asChild variant="outline">
-                <Link href="/win-rate-guide" className="flex items-center">
-                    <BarChart className="w-4 h-4 mr-2" /> Understanding the Win-Rate Chart
                 </Link>
             </Button>
           </CardContent>

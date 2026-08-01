@@ -8,20 +8,19 @@
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import Link from 'next/link';
-import { Bot, BrainCircuit, Lightbulb, BarChart, Info, Undo, ListCollapse, Users, Trophy, RotateCcw, Settings } from 'lucide-react';
+import { Bot, BrainCircuit, Lightbulb, BarChart, Info, Undo, ListCollapse, Users, Trophy, RotateCcw, Settings, BookOpen, Cpu } from 'lucide-react';
 import type { BoardState, Player, Move } from '@/types/othello';
 import { createInitialBoard, getValidMoves, applyMove, getScore, getOpponent, boardToString, getFlipsForMove } from '@/lib/othello';
 import OthelloBoard from '@/components/othello-board';
 import GameInfoPanel from '@/components/game-info-panel';
 import AiPanel from '@/components/ai-panel';
-import WinRateChart from '@/components/win-rate-chart';
 import { visualizeAiDecision } from '@/ai/flows/real-time-decision-visualization';
 import { analyzeGame } from '@/ai/flows/game-analysis';
 import type { AnalyzeGameOutput } from '@/ai/flows/game-analysis';
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { minimax } from '@/lib/minimax';
-import { getCnnModelMove } from '@/lib/cnn-model';
+import { getCnnModelMove, preloadCnnModel } from '@/lib/cnn-model';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
@@ -71,18 +70,14 @@ export default function Home() {
   const [gameAnalysis, setGameAnalysis] = useState<AnalyzeGameOutput | null>(null);
   const [analysisLoading, setAnalysisLoading] = useState(false);
 
-  // Mock training data for chart visualization
-  const [trainingData, setTrainingData] = useState([
-    { games: 10, aiWins: 4, opponentWins: 6 },
-    { games: 20, aiWins: 7, opponentWins: 13 },
-    { games: 30, aiWins: 15, opponentWins: 15 },
-    { games: 40, aiWins: 25, opponentWins: 15 },
-    { games: 50, aiWins: 35, opponentWins: 15 },
-  ]);
-
   // Advanced Undo State
   const [showAdvancedUndo, setShowAdvancedUndo] = useState(false);
   const [undoMoveCount, setUndoMoveCount] = useState(1);
+
+  // Preload model weights in the browser on page load
+  useEffect(() => {
+    preloadCnnModel();
+  }, []);
 
   const playSound = (sound: 'place' | 'flip') => {
     // Sound logic can be re-enabled here if needed.
@@ -347,8 +342,7 @@ export default function Home() {
     } else if (gameMode === 'aiVsAi') {
       startAiVsAiGame();
     }
-    setTrainingData(prev => prev.map(d => ({ ...d, aiWins: Math.floor(Math.random() * d.games), opponentWins: Math.floor(Math.random() * d.games) })));
-    toast({ title: "New Training Session", description: "AI model has been reset and is learning from scratch." });
+    toast({ title: "New Training Session", description: "AI model game state reset." });
   };
 
   const handleUndo = (movesToUndo?: number, forceUndo: boolean = false) => {
@@ -617,12 +611,30 @@ export default function Home() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-lg font-medium flex items-center gap-2">
-                <BarChart className="w-5 h-5 text-primary" />
-                Win-Rate Progress
+                <BookOpen className="w-5 h-5 text-primary" />
+                Neural Architecture & ONNX Deployment
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <WinRateChart data={trainingData} />
+            <CardContent className="space-y-3 text-sm">
+              <div className="p-3 bg-muted/50 rounded-lg space-y-1">
+                <h4 className="font-semibold text-primary flex items-center gap-1.5">
+                  <BrainCircuit className="w-4 h-4" />
+                  David et al. (AlphaZero) Architecture
+                </h4>
+                <p className="text-muted-foreground text-xs leading-relaxed">
+                  Based on the neural network design established by David et al. (DeepMind AlphaZero). It features an 8-residual-block Convolutional Neural Network (ResNet-8) with dual prediction heads: a <strong>Policy Head</strong> (64 logit outputs for move selection) and a <strong>Value Head</strong> (board evaluation).
+                </p>
+              </div>
+
+              <div className="p-3 bg-muted/50 rounded-lg space-y-1">
+                <h4 className="font-semibold text-primary flex items-center gap-1.5">
+                  <Cpu className="w-4 h-4" />
+                  Client-Side ONNX Web Execution
+                </h4>
+                <p className="text-muted-foreground text-xs leading-relaxed">
+                  PyTorch model weights are stored in ONNX format (<code className="text-primary font-mono text-[11px]">othello_model_final.onnx</code>) and downloaded directly into your browser via <code className="text-primary font-mono text-[11px]">onnxruntime-web</code>. Inferences run 100% client-side with WebAssembly, requiring zero backend server cost.
+                </p>
+              </div>
             </CardContent>
           </Card>
         </div>

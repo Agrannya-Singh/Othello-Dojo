@@ -33,6 +33,17 @@ export async function getOrLoadCnnSession(): Promise<ort.InferenceSession> {
 }
 
 /**
+ * Preloads the ONNX model weights and WASM binaries in the background when page mounts.
+ */
+export function preloadCnnModel(): void {
+  if (typeof window !== 'undefined') {
+    getOrLoadCnnSession().catch(err => {
+      console.warn('Background preloading of ONNX model failed:', err);
+    });
+  }
+}
+
+/**
  * Converts Next.js BoardState into [1, 2, 8, 8] Float32Array tensor format expected by OthelloNetV3.
  * Channel 0: 1.0 where cell has current player's piece, 0.0 otherwise.
  * Channel 1: 1.0 where cell has opponent's piece, 0.0 otherwise.
